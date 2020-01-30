@@ -115,6 +115,9 @@ end)
 
 AddEventHandler('esx_clotheshop:hasExitedMarker', function(zone)
 	ESX.UI.Menu.CloseAll()
+	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
+		TriggerEvent('skinchanger:loadSkin', skin)
+	end)
 	currentAction = nil
 end)
 

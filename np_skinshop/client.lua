@@ -71,7 +71,7 @@ RegisterNUICallback("exit", function()
 							if k == 1 then skin.mask_1 = v.type skin.mask_2 = v.color end
 							if k == 7 then skin.chain_1 = v.type skin.chain_2 = v.color end
 							if k == 5 then skin.bags_1 = v.type skin.bags_2 = v.color end
-							if k == 3 then skin.arms_1 = v.type skin.arms_2 = v.color end
+							if k == 3 then skin.arms = v.type skin.arms_2 = v.color end
 							if k == 4 then skin.pants_1 = v.type skin.pants_2 = v.color end
 							if k == 8 then skin.tshirt_1 = v.type skin.tshirt_2 = v.color end
 							if k == 6 then skin.shoes_1 = v.type skin.shoes_2 = v.color end
@@ -83,6 +83,36 @@ RegisterNUICallback("exit", function()
 						end
 
 						TriggerServerEvent('esx_skin:save', skin)
+						TriggerEvent('skinchanger:loadSkin', skin)
+
+						ESX.TriggerServerCallback('esx_clotheshop:checkPropertyDataStore', function(foundStore)
+							if foundStore then
+								ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'save_dressing', {
+									title = "Would you like to save outfit to your property?",
+									align = 'right',
+									elements = {
+										{label = "No",  value = 'no'},
+										{label = "Yes", value = 'yes'}
+								}}, function(data2, menu2)
+									menu2.close()
+
+									if data2.current.value == 'yes' then
+										ESX.UI.Menu.Open('dialog', GetCurrentResourceName(), 'outfit_name', {
+											title = "Outfit Name"
+										}, function(data3, menu3)
+											menu3.close()
+
+											TriggerEvent('skinchanger:getSkin', function(skin)
+												TriggerServerEvent('esx_clotheshop:saveOutfit', data3.value, skin)
+												ESX.ShowNotification("Outfit has been saved at your property.")
+											end)
+										end, function(data3, menu3)
+											menu3.close()
+										end)
+									end
+								end)
+							end
+						end)
 					end)
 				else
 					ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
